@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfTimedAction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TimedAction xsi:type="TimedAction_PWM">
+    <Name>Test1 PWM</Name>
+    <StartTime>1900-01-01T12:55:00</StartTime>
+    <RampTime>4</RampTime>
+    <LagTime>5</LagTime>
+    <Value_max>100</Value_max>
+    <daystowork>
+      <DayOfWeek>Monday</DayOfWeek>
+      <DayOfWeek>Thursday</DayOfWeek>
+      <DayOfWeek>Wednesday</DayOfWeek>
+      <DayOfWeek>Saturday</DayOfWeek>
+	 <DayOfWeek>Sunday</DayOfWeek>
+    </daystowork>
+  </TimedAction>
+</ArrayOfTimedAction>
