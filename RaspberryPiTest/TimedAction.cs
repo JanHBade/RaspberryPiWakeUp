@@ -112,14 +112,12 @@ namespace Timed
         {
             while (!_shouldStop)
             {
-                if(daystowork.Contains(DateTime.Now.DayOfWeek))
+                if (compare())
                 {
-                    if (compare())
+                    addOneDay();
+                    if(daystowork.Contains(DateTime.Now.DayOfWeek))
                     {
                         doAction();                        
-                        day = DateTime.Now.Day+1;
-                        if (day > DateTime.DaysInMonth(DateTime.Now.Year,DateTime.Now.Month))
-                            day = 1;
                     }
                 }
 #if DEBUG
@@ -131,6 +129,13 @@ namespace Timed
             }
             newThread = null;
             Console.WriteLine(Name+" worker thread: terminating gracefully.");
+        }
+
+        private void addOneDay()
+        {
+            day = DateTime.Now.Day + 1;
+            if (day > DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month))
+                day = 1;
         }
 
         private volatile bool _shouldStop=false;
