@@ -14,4 +14,19 @@
 	 <DayOfWeek>Sunday</DayOfWeek>
     </daystowork>
   </TimedAction>
+  <TimedAction xsi:type="TimedAction_Music">
+    <Name>Test1 Music</Name>
+    <StartTime>1900-01-01T12:55:00</StartTime>
+    <RampTime>4</RampTime>
+    <LagTime>5</LagTime>
+    <Value_max>50</Value_max>
+    <Stream>http://gffstream.ic.llnwd.net/stream/gffstream_stream_wdr_einslive_a</Stream>
+    <daystowork>
+      <DayOfWeek>Monday</DayOfWeek>
+      <DayOfWeek>Thursday</DayOfWeek>
+      <DayOfWeek>Wednesday</DayOfWeek>
+      <DayOfWeek>Saturday</DayOfWeek>
+      <DayOfWeek>Sunday</DayOfWeek>
+    </daystowork>
+  </TimedAction>
 </ArrayOfTimedAction>

@@ -24,21 +24,52 @@ namespace RaspberryPi
 #endif
         }
 
-        private int pin;
+        public int pin;
     }
 
     public class mpc_Control
     {
+        private Process p=new Process();        
+
         public void startStream(String stream)
         {
+            p.StartInfo.FileName = "mpc";
+            p.StartInfo.Arguments = "--wait clear";
+            
+            p.Start();
+            p.WaitForExit();           
+                        
+            p.StartInfo.Arguments = "--wait add "+stream;
+
+            p.Start();
+            p.WaitForExit();
+
+            p.StartInfo.Arguments = "--wait play";
+
+            p.Start();
+            p.WaitForExit();
+
+            p = null;
         }
 
         public void stopStram()
         {
+            p.StartInfo.Arguments = "--wait stop";
+
+            p.Start();
+            p.WaitForExit();
+
+            p = null;
         }
 
         public void setVolume(int value)
         {
+            p.StartInfo.Arguments = "--wait volume "+value;
+
+            p.Start();
+            p.WaitForExit();
+
+            p = null;
         }
     }
 }

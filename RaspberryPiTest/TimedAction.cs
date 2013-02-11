@@ -10,17 +10,24 @@ namespace Timed
 {
     public class TimedAction_PWM : TimedAction
     {
-        public int LED_Pin { get; set; }
+        public int LED_Pin
+        {
+            get { return _LED_Pin; }
+            set
+            {
+                _LED_Pin = value;
+                pwm_pin = new RPi_IO(_LED_Pin, "pwm");
+            }
+        }        
 
         public TimedAction_PWM():base()
         {
-            LED_Pin = 1;
+            LED_Pin = 1;            
         }
 
         protected override void initAction()
         {
-            base.initAction();
-            pwm_pin = new RPi_IO(LED_Pin, "pwm");
+            base.initAction();            
             act_pwm_value = pwm_werte[(Value - 1) / 2];
             Console.WriteLine(Name + " PWM Value: " + act_pwm_value);
 #if DEBUG
@@ -49,6 +56,7 @@ namespace Timed
 #endif
         }
 
+        public int _LED_Pin;
         private RPi_IO pwm_pin;
         private int[] pwm_werte ={10,
                         11,12,13,15,16,18,19,21,23,26,
@@ -58,6 +66,35 @@ namespace Timed
                         362,398,437,481,528,580,638,701,
                         771,847,931,1023};
         private int act_pwm_value;
+    }
+
+    public class TimedAction_Music : TimedAction
+    {
+        public String Stream { get; set; }
+
+        public TimedAction_Music() :base()
+        {
+            control = new mpc_Control();
+        }
+
+        protected override void initAction()
+        {
+            base.initAction();
+            control.setVolume(Value);
+            control.startStream(Stream);            
+        }
+        protected override void Ramp_active()
+        {
+            base.Ramp_active();
+            control.setVolume(Value);
+        }
+        protected override void stopAction()
+        {
+            base.stopAction();
+            control.stopStram();
+        }
+
+        private mpc_Control control;
     }
 
     [XmlInclude(typeof(TimedAction_PWM))]
