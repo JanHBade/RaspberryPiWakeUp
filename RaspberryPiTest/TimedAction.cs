@@ -16,7 +16,10 @@ namespace Timed
             set
             {
                 _LED_Pin = value;
+#if DEBUG
+#else
                 pwm_pin = new RPi_IO(_LED_Pin, "pwm");
+#endif
             }
         }        
 
@@ -29,7 +32,7 @@ namespace Timed
         {
             base.initAction();            
             act_pwm_value = pwm_werte[(Value - 1) / 2];
-            Console.WriteLine(Name + " PWM Value: " + act_pwm_value);
+            Console.WriteLine(Name + " init PWM Value: " + act_pwm_value);
 #if DEBUG
 #else
             pwm_pin.setPWM(act_pwm_value);
@@ -39,7 +42,7 @@ namespace Timed
         {
             base.Ramp_active();            
             act_pwm_value = pwm_werte[(Value - 1) / 2];
-            Console.WriteLine(Name + " PWM Value: " + act_pwm_value);
+            Console.WriteLine(Name + " Ramp PWM Value: " + act_pwm_value);
 #if DEBUG            
 #else
             pwm_pin.setPWM(act_pwm_value);
@@ -49,7 +52,7 @@ namespace Timed
         {
             base.stopAction();
             act_pwm_value = 0;
-            Console.WriteLine(Name + " PWM Value: " + act_pwm_value);
+            Console.WriteLine(Name + " Stop PWM Value: " + act_pwm_value);
 #if DEBUG            
 #else
             pwm_pin.setPWM(act_pwm_value);
@@ -74,30 +77,46 @@ namespace Timed
 
         public TimedAction_Music() :base()
         {
+#if DEBUG
+#else
             control = new mpc_Control();
+#endif
         }
 
         protected override void initAction()
         {
             base.initAction();
+            Console.WriteLine(Name + " init Vol: " + Value + " Stream: " + Stream);
+#if DEBUG
+#else
             control.setVolume(Value);
-            control.startStream(Stream);            
+            control.startStream(Stream);
+#endif
         }
         protected override void Ramp_active()
         {
             base.Ramp_active();
+            Console.WriteLine(Name + " Ramp Vol: " + Value);
+#if DEBUG
+#else
             control.setVolume(Value);
+#endif
         }
         protected override void stopAction()
         {
             base.stopAction();
+            Console.WriteLine(Name + " Stop Vol: " + Value);
+#if DEBUG
+#else
             control.stopStram();
+#endif
         }
 
         private mpc_Control control;
     }
 
     [XmlInclude(typeof(TimedAction_PWM))]
+    [XmlInclude(typeof(TimedAction_Music))]
     public class TimedAction
     {
         public String Name { get; set; }        

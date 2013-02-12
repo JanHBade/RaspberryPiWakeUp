@@ -28,23 +28,31 @@ namespace RaspberryPiTest
             Console.WriteLine("Day: " + now.Day);
             Console.WriteLine("DayOfWeek: " + now.DayOfWeek);
             Console.WriteLine("DateTime.Now: " + DateTime.Now);
-            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd"));*/            
+            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd"));*/
 
-            readfromXML("actions.xml");
-
-            foreach (TimedAction ta in actionstodo)
-            {                
-                ta.Start();
-            }
-
-            while(keepRunning)
+            try
             {
-                Thread.Sleep(1000);
-            }
+                readfromXML("actions.xml");
 
-            foreach (TimedAction ta in actionstodo)
+                foreach (TimedAction ta in actionstodo)
+                {
+                    ta.Start();
+                }
+
+                while (keepRunning)
+                {
+                    Thread.Sleep(1000);
+                }
+
+                foreach (TimedAction ta in actionstodo)
+                {
+                    ta.RequestStop();
+                }
+            }
+            catch (Exception exp)
             {
-                ta.RequestStop();
+                Console.WriteLine(exp.Message);
+                Console.WriteLine(exp.StackTrace);
             }
 
             /*TimedAction t = new TimedAction();

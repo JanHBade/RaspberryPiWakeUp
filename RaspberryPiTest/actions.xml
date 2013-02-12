@@ -8,10 +8,12 @@
     <Value_max>100</Value_max>
     <daystowork>
       <DayOfWeek>Monday</DayOfWeek>
-      <DayOfWeek>Thursday</DayOfWeek>
+      <DayOfWeek>Tuesday</DayOfWeek>
       <DayOfWeek>Wednesday</DayOfWeek>
+      <DayOfWeek>Thursday</DayOfWeek>
+      <DayOfWeek>Friday</DayOfWeek>
       <DayOfWeek>Saturday</DayOfWeek>
-	 <DayOfWeek>Sunday</DayOfWeek>
+      <DayOfWeek>Sunday</DayOfWeek>
     </daystowork>
   </TimedAction>
   <TimedAction xsi:type="TimedAction_Music">
@@ -23,8 +25,10 @@
     <Stream>http://gffstream.ic.llnwd.net/stream/gffstream_stream_wdr_einslive_a</Stream>
     <daystowork>
       <DayOfWeek>Monday</DayOfWeek>
-      <DayOfWeek>Thursday</DayOfWeek>
+      <DayOfWeek>Tuesday</DayOfWeek>      
       <DayOfWeek>Wednesday</DayOfWeek>
+      <DayOfWeek>Thursday</DayOfWeek>
+      <DayOfWeek>Friday</DayOfWeek>
       <DayOfWeek>Saturday</DayOfWeek>
       <DayOfWeek>Sunday</DayOfWeek>
     </daystowork>

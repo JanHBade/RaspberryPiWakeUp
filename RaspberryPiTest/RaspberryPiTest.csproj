@@ -52,7 +52,10 @@
     <Compile Include="TimedAction.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="actions.xml" />
+    <None Include="actions.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="pwm_table.xls" />
