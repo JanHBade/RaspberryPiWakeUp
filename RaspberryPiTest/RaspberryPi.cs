@@ -29,27 +29,29 @@ namespace RaspberryPi
 
     public class mpc_Control
     {
-        private Process p=new Process();        
+        private Process p;
+
+        public mpc_Control()
+        {
+            p = new Process();
+            p.StartInfo.FileName = "mpc";
+        }
 
         public void startStream(String stream)
         {
-            p.StartInfo.FileName = "mpc";
+
             p.StartInfo.Arguments = "--wait clear";
-            
             p.Start();
             p.WaitForExit();           
                         
             p.StartInfo.Arguments = "--wait add "+stream;
-
             p.Start();
             p.WaitForExit();
 
             p.StartInfo.Arguments = "--wait play";
-
             p.Start();
             p.WaitForExit();
 
-            p = null;
         }
 
         public void stopStram()
@@ -58,8 +60,6 @@ namespace RaspberryPi
 
             p.Start();
             p.WaitForExit();
-
-            p = null;
         }
 
         public void setVolume(int value)
@@ -68,8 +68,6 @@ namespace RaspberryPi
 
             p.Start();
             p.WaitForExit();
-
-            p = null;
         }
     }
 }
