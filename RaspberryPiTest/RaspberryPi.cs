@@ -37,37 +37,51 @@ namespace RaspberryPi
             p.StartInfo.FileName = "mpc";
         }
 
-        public void startStream(String stream)
+        public void initStream(String stream)
         {
-
+            stopStream();
+#if DEBUG
+#else            
             p.StartInfo.Arguments = "--wait clear";
-            p.Start();
-            p.WaitForExit();           
-                        
-            p.StartInfo.Arguments = "--wait add "+stream;
             p.Start();
             p.WaitForExit();
 
+            p.StartInfo.Arguments = "--wait add " + stream;
+            p.Start();
+            p.WaitForExit();
+#endif
+        }
+
+        public void startStream(String stream)
+        {
+#if DEBUG
+#else
             p.StartInfo.Arguments = "--wait play";
             p.Start();
             p.WaitForExit();
-
+#endif
         }
 
-        public void stopStram()
+        public void stopStream()
         {
+#if DEBUG
+#else
             p.StartInfo.Arguments = "--wait stop";
 
             p.Start();
             p.WaitForExit();
+#endif
         }
 
         public void setVolume(int value)
         {
+#if DEBUG
+#else
             p.StartInfo.Arguments = "--wait volume "+value;
 
             p.Start();
             p.WaitForExit();
+#endif
         }
     }
 }

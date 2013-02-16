@@ -16,10 +16,7 @@ namespace Timed
             set
             {
                 _LED_Pin = value;
-#if DEBUG
-#else
                 pwm_pin = new RPi_IO(_LED_Pin, "pwm");
-#endif
             }
         }        
 
@@ -30,7 +27,13 @@ namespace Timed
 
         protected override void initAction()
         {
-            base.initAction();            
+            base.initAction();
+            stopAction();
+        }
+
+        protected override void startAction()
+        {
+            base.startAction();            
             act_pwm_value = pwm_werte[(Value - 1) / 2];
             Console.WriteLine(Name + " init PWM Value: " + act_pwm_value);
 #if DEBUG
@@ -38,6 +41,7 @@ namespace Timed
             pwm_pin.setPWM(act_pwm_value);
 #endif
         }
+
         protected override void Ramp_active()
         {
             base.Ramp_active();            
@@ -48,12 +52,24 @@ namespace Timed
             pwm_pin.setPWM(act_pwm_value);
 #endif
         }
+
         protected override void stopAction()
         {
             base.stopAction();
             act_pwm_value = 0;
             Console.WriteLine(Name + " Stop PWM Value: " + act_pwm_value);
 #if DEBUG            
+#else
+            pwm_pin.setPWM(act_pwm_value);
+#endif
+        }
+
+        protected override void forceAction()
+        {
+            base.forceAction();
+            act_pwm_value = pwm_werte[(Value - 1) / 2];
+            Console.WriteLine(Name + " Force PWM Value: " + act_pwm_value);
+#if DEBUG
 #else
             pwm_pin.setPWM(act_pwm_value);
 #endif
@@ -77,10 +93,7 @@ namespace Timed
 
         public TimedAction_Music() :base()
         {
-#if DEBUG
-#else
             control = new mpc_Control();
-#endif
         }
 
         protected override void initAction()
@@ -89,10 +102,22 @@ namespace Timed
             Console.WriteLine(Name + " init Vol: " + Value + " Stream: " + Stream);
 #if DEBUG
 #else
+            control.setVolume(0);
+            control.initStream(Stream);
+#endif
+        }
+
+        protected override void startAction()
+        {
+            base.startAction();
+            Console.WriteLine(Name + " start Vol: " + Value);
+#if DEBUG
+#else
             control.setVolume(Value);
             control.startStream(Stream);
 #endif
         }
+
         protected override void Ramp_active()
         {
             base.Ramp_active();
@@ -102,13 +127,24 @@ namespace Timed
             control.setVolume(Value);
 #endif
         }
+
         protected override void stopAction()
         {
             base.stopAction();
             Console.WriteLine(Name + " Stop Vol: " + Value);
 #if DEBUG
 #else
-            control.stopStram();
+            control.stopStream();
+#endif
+        }
+
+        protected override void forceAction()
+        {
+            base.forceAction();
+#if DEBUG
+#else
+            control.startStream(Stream);
+            control.setVolume(Value);
 #endif
         }
 
@@ -120,7 +156,9 @@ namespace Timed
     public class TimedAction
     {
         public String Name { get; set; }        
-        public DateTime StartTime {get; set;}
+        public myTime StartTime {get; set;}
+        public bool active { get; set; }
+        public bool force { get; set; }
         public int RampTime { get; set; }
         public int LagTime { get; set; }        
         public int Value_max { get; set; }
@@ -128,21 +166,31 @@ namespace Timed
 
         public void Start()
         {
-            day = DateTime.Now.Day;
-            newThread = new Thread(this.DoWork);
-            newThread.Start();
+            if (active)
+            {
+                newThread = new Thread(this.DoWork);
+                newThread.Start();
+            }
         }
 
         public void RequestStop()
         {
-            _shouldStop = true;
+            shouldStop = true;
         }
 
         protected virtual void initAction()
         {
+            Value = 0;
+#if DEBUG
+            Console.WriteLine(Name + " b_init Action..." + Value + " " + DateTime.Now.Minute + ":" + DateTime.Now.Second);
+#endif
+        }
+
+        protected virtual void startAction()
+        {
             Value = 1;
 #if DEBUG
-            Console.WriteLine(Name + " init Action..." + Value + " " + DateTime.Now.Minute + ":" + DateTime.Now.Second);
+            Console.WriteLine(Name + " b_start Action..." + Value + " " + DateTime.Now.Minute + ":" + DateTime.Now.Second);
 #endif
         }
 
@@ -150,7 +198,7 @@ namespace Timed
         {
             Value = 0;
 #if DEBUG
-            Console.WriteLine(Name + " stop Action..." + Value + " " + DateTime.Now.Minute + ":" + DateTime.Now.Second);
+            Console.WriteLine(Name + " b_stop Action..." + Value + " " + DateTime.Now.Minute + ":" + DateTime.Now.Second);
 #endif
         }
 
@@ -158,7 +206,15 @@ namespace Timed
         {
             Value++;
 #if DEBUG
-            Console.WriteLine(Name + " Ramp active " + Value + " " + DateTime.Now.Minute + ":" + DateTime.Now.Second);            
+            Console.WriteLine(Name + " b_Ramp active " + Value + " " + DateTime.Now.Minute + ":" + DateTime.Now.Second);            
+#endif
+        }
+
+        protected virtual void forceAction()
+        {
+            Value = Value_max;
+#if DEBUG
+            Console.WriteLine(Name + " b_force " + Value + " " + DateTime.Now.Minute + ":" + DateTime.Now.Second);
 #endif
         }
 
@@ -166,44 +222,45 @@ namespace Timed
 
         private void DoWork()
         {
-            while (!_shouldStop)
+            shouldStop = false;
+            initAction();
+            if (force)
+                forceAction();
+            else
             {
-                if (compare())
+                while (!shouldStop)
                 {
-                    addOneDay();
-                    if(daystowork.Contains(DateTime.Now.DayOfWeek))
+                    if (StartTime.compare())
                     {
-                        doAction();                        
+                        StartTime.addOneDay();
+                        if (daystowork.Contains(DateTime.Now.DayOfWeek))
+                        {
+                            doAction();
+                        }
                     }
-                }
 #if DEBUG
-                Thread.Sleep(1000);
-                //Console.WriteLine(Name+" worker thread: working..."+day+" "+StartTime.Hour+":"+StartTime.Minute);
+                    Thread.Sleep(1000);
+                    //Console.WriteLine(Name+" worker thread: working..."+day+" "+StartTime.Hour+":"+StartTime.Minute);
 #else
                 Thread.Sleep(5000);
 #endif
+                }
             }
             newThread = null;
             Console.WriteLine(Name+" worker thread: terminating gracefully.");
         }
 
-        private void addOneDay()
-        {
-            day = DateTime.Now.Day + 1;
-            if (day > DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month))
-                day = 1;
-        }
+        
 
-        private volatile bool _shouldStop=false;
+        private volatile bool shouldStop=false;
         private Thread newThread;
         private System.Timers.Timer t;
         private bool LagTime_active = false;
-        private int LagTime_ms;        
-        private int day;
+        private int LagTime_ms;
 
         private void doAction()
         {
-            initAction();
+            startAction();
             //Console.WriteLine(Name+" do Action...");
             t = new System.Timers.Timer();
             t.Elapsed += this.doTimerEvent;
@@ -232,23 +289,45 @@ namespace Timed
             }
         }        
 
-        private bool compare()        
+        
+            
+    }
+
+    public class myTime
+    {
+        public int hour { get; set; }
+        public int minute { get; set; }
+
+        public myTime()
+        {
+            day = DateTime.Now.Day;
+        }
+
+        public bool compare()
         {
             if (DateTime.Now.Day > day)
                 return true;
             else if (DateTime.Now.Day < day)
                 return false;
             else
-                if (DateTime.Now.Hour > StartTime.Hour)
+                if (DateTime.Now.Hour > hour)
                     return true;
-                else if (DateTime.Now.Hour < StartTime.Hour)
+                else if (DateTime.Now.Hour < hour)
                     return false;
                 else
-                    if (DateTime.Now.Minute > StartTime.Minute)
+                    if (DateTime.Now.Minute > minute)
                         return true;
                     else
                         return false;
         }
-            
-    }    
+
+        public void addOneDay()
+        {
+            day = DateTime.Now.Day + 1;
+            if (day > DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month))
+                day = 1;
+        }
+
+        private int day;
+    }
 }

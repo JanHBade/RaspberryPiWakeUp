@@ -13,7 +13,9 @@ namespace RaspberryPiTest
     class Program
     {
         static List<TimedAction> actionstodo = new List<TimedAction>();
+        static FileSystemWatcher FSW;
         static volatile bool keepRunning = true;
+        static String file = "actions.xml";        
 
         static void Main(string[] args)
         {
@@ -22,6 +24,10 @@ namespace RaspberryPiTest
                 keepRunning = false;
                 e.Cancel = true;                
             };
+
+            if(args.Length==1)
+                file=args[0];
+
             /*DateTime now = DateTime.Now;
             Console.WriteLine("Year: " + now.Year);
             Console.WriteLine("Month: " + now.Month);
@@ -31,8 +37,21 @@ namespace RaspberryPiTest
             Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd"));*/
 
             try
-            {
-                readfromXML("actions.xml");
+            {                
+                FSW = new FileSystemWatcher();
+                FileInfo fi = new FileInfo(file);
+
+                // Pfad und Filter festlegen               
+                FSW.Path = fi.DirectoryName;
+                FSW.Filter = fi.Name;
+
+                // Events definieren
+                FSW.Changed += new FileSystemEventHandler(FSW_Changed);
+
+                // Filesystemwatcher aktivieren
+                FSW.EnableRaisingEvents = true;
+               
+                readfromXML(file);
 
                 foreach (TimedAction ta in actionstodo)
                 {
@@ -99,6 +118,12 @@ namespace RaspberryPiTest
             actionstodo = (List<TimedAction>)deserializer.Deserialize(textReader);
             textReader.Close();
         }
+
+        static void FSW_Changed(object sender, FileSystemEventArgs e)
+        {
+            WatcherChangeTypes wct = e.ChangeType;
+            Console.WriteLine("File "+wct);
+        }        
     }    
     
 }

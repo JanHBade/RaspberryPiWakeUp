@@ -2,10 +2,15 @@
 <ArrayOfTimedAction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <TimedAction xsi:type="TimedAction_PWM">
     <Name>Test1 PWM</Name>
-    <StartTime>1900-01-01T12:55:00</StartTime>
-    <RampTime>4</RampTime>
-    <LagTime>5</LagTime>
-    <Value_max>100</Value_max>
+    <active>true</active>
+    <force>true</force>
+    <StartTime>
+      <hour>16</hour>
+      <minute>17</minute>
+    </StartTime>
+    <RampTime>2</RampTime>
+    <LagTime>2</LagTime>
+    <Value_max>10</Value_max>
     <daystowork>
       <DayOfWeek>Monday</DayOfWeek>
       <DayOfWeek>Tuesday</DayOfWeek>
@@ -18,7 +23,12 @@
   </TimedAction>
   <TimedAction xsi:type="TimedAction_Music">
     <Name>Test1 Music</Name>
-    <StartTime>1900-01-01T12:55:00</StartTime>
+    <active>true</active>
+    <force>true</force>
+    <StartTime>
+      <hour>16</hour>
+      <minute>00</minute>
+    </StartTime>
     <RampTime>4</RampTime>
     <LagTime>5</LagTime>
     <Value_max>50</Value_max>
