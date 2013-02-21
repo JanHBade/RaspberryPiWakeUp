@@ -3,7 +3,7 @@
   <TimedAction xsi:type="TimedAction_PWM">
     <Name>Test1 PWM</Name>
     <LED_Pin>1</LED_Pin>
-    <divider>4000</divider>
+    <divider>93</divider>
     <active>true</active>
     <force>true</force>
     <StartTime>
