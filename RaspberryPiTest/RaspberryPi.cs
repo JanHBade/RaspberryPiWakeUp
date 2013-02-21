@@ -22,8 +22,15 @@ namespace RaspberryPi
             Console.WriteLine("Setze Pin: " + pin + " auf pwm");
             Console.WriteLine("Setze Divider: " + divider);
 #else
-            Process.Start("gpio", "mode " + pin + " pwm");
-            Process.Start("gpio", "pwmc " + divider);
+            // divider = (1/f)*18600
+            // divider = 93  = 200 Hz
+            //           186 = 100 Hz
+            
+            Process.Start("gpio", "mode " + pin + " pwm");  // Set Pin to PWM mode
+            Process.Start("gpio", "pwm-ms");                // disable balanced pwm mode
+            Process.Start("gpio", "pwmr 1024");             // Set the PWM Range to 1024
+            Process.Start("gpio", "pwmc " + divider);       // Set the PWM divider 
+            
 #endif
         }
 
