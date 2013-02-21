@@ -10,24 +10,22 @@ namespace Timed
 {
     public class TimedAction_PWM : TimedAction
     {
-        public int LED_Pin
-        {
-            get { return _LED_Pin; }
-            set
-            {
-                _LED_Pin = value;
-                pwm_pin = new RPi_IO(_LED_Pin, "pwm");
-            }
-        }        
+        public int LED_Pin { get; set; }
+        public int divider { get; set; }
 
         public TimedAction_PWM():base()
         {
-            LED_Pin = 1;            
+            LED_Pin = 1;
         }
 
         protected override void initAction()
         {
             base.initAction();
+            if (divider!=0)
+                pwm_pin = new RPi_IO(LED_Pin, divider);
+            else
+                pwm_pin = new RPi_IO(LED_Pin, "pwm");
+
             stopAction();
         }
 
@@ -74,8 +72,7 @@ namespace Timed
             pwm_pin.setPWM(act_pwm_value);
 #endif
         }
-
-        public int _LED_Pin;
+        
         private RPi_IO pwm_pin;
         private int[] pwm_werte ={10,
                         11,12,13,15,16,18,19,21,23,26,

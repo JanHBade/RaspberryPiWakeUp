@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
+  <xsd:element name="ArrayOfTimedAction">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element maxOccurs="unbounded" name="TimedAction">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="Name" type="xsd:string" />
+              <xsd:element minOccurs="0" name="LED_Pin" type="xsd:unsignedByte" />
+              <xsd:element minOccurs="0" name="divider" type="xsd:unsignedShort" />
+              <xsd:element name="active" type="xsd:boolean" />
+              <xsd:element name="force" type="xsd:boolean" />
+              <xsd:element name="StartTime">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element name="hour" type="xsd:unsignedByte" />
+                    <xsd:element name="minute" type="xsd:unsignedByte" />
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+              <xsd:element name="RampTime" type="xsd:unsignedByte" />
+              <xsd:element name="LagTime" type="xsd:unsignedByte" />
+              <xsd:element name="Value_max" type="xsd:unsignedByte" />
+              <xsd:element minOccurs="0" name="Stream" type="xsd:string" />
+              <xsd:element name="daystowork">
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:element maxOccurs="unbounded" name="DayOfWeek" type="xsd:string" />
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>  
+</xs:schema>

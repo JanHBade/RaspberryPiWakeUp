@@ -15,6 +15,18 @@ namespace RaspberryPi
 #endif
         }
 
+        public RPi_IO(int pin, int divider)
+        {
+            this.pin = pin;
+#if DEBUG
+            Console.WriteLine("Setze Pin: " + pin + " auf pwm");
+            Console.WriteLine("Setze Divider: " + divider);
+#else
+            Process.Start("gpio", "mode " + pin + " pwm");
+            Process.Start("gpio", "pwmc " + divider);
+#endif
+        }
+
         public void setPWM(int value)
         {
 #if DEBUG
