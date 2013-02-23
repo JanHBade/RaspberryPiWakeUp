@@ -10,21 +10,21 @@ namespace Timed
 {
     public class TimedAction_PWM : TimedAction
     {
-        public int LED_Pin { get; set; }
-        public int divider { get; set; }
+        public int PWM_Frequency { get; set; }
+        public bool PWM_Inverted { get; set; }
 
         public TimedAction_PWM():base()
         {
-            LED_Pin = 1;
         }
 
         protected override void initAction()
         {
             base.initAction();
-            if (divider!=0)
-                pwm_pin = new RPi_IO(LED_Pin, divider);
+
+            if (PWM_Frequency == 0)
+                pwm_pin = new RPi_IO(200);
             else
-                pwm_pin = new RPi_IO(LED_Pin, "pwm");
+                pwm_pin = new RPi_IO(PWM_Frequency);
 
             stopAction();
         }
@@ -36,7 +36,7 @@ namespace Timed
             Console.WriteLine(Name + " init PWM Value: " + act_pwm_value);
 #if DEBUG
 #else
-            pwm_pin.setPWM(act_pwm_value);
+            pwm_pin.setPWM(act_pwm_value, PWM_Inverted);
 #endif
         }
 
@@ -47,7 +47,7 @@ namespace Timed
             Console.WriteLine(Name + " Ramp PWM Value: " + act_pwm_value);
 #if DEBUG            
 #else
-            pwm_pin.setPWM(act_pwm_value);
+            pwm_pin.setPWM(act_pwm_value, PWM_Inverted);
 #endif
         }
 
@@ -58,7 +58,7 @@ namespace Timed
             Console.WriteLine(Name + " Stop PWM Value: " + act_pwm_value);
 #if DEBUG            
 #else
-            pwm_pin.setPWM(act_pwm_value);
+            pwm_pin.setPWM(act_pwm_value, PWM_Inverted);
 #endif
         }
 
@@ -69,7 +69,7 @@ namespace Timed
             Console.WriteLine(Name + " Force PWM Value: " + act_pwm_value);
 #if DEBUG
 #else
-            pwm_pin.setPWM(act_pwm_value);
+            pwm_pin.setPWM(act_pwm_value, PWM_Inverted);
 #endif
         }
         

@@ -5,45 +5,41 @@ namespace RaspberryPi
 {
     class RPi_IO
     {
-        public RPi_IO(int pin, String mode)
-        {
-            this.pin = pin;
-#if DEBUG
-            Console.WriteLine("Setze Pin: " + pin + " auf " + mode);
-#else
-            Process.Start("gpio", "mode " + pin + " " + mode);
-#endif
-        }
 
-        public RPi_IO(int pin, int divider)
+
+        public RPi_IO( int frequency)
         {
-            this.pin = pin;
-#if DEBUG
-            Console.WriteLine("Setze Pin: " + pin + " auf pwm");
-            Console.WriteLine("Setze Divider: " + divider);
-#else
+
+            Console.WriteLine("Setze PWM-Frequenz: " + frequency);
+            frequency = (int)((1.0 / (float)frequency) * 18600.0);
+            Console.WriteLine("Setze PWM-Divider: " + frequency);
+
+
             // divider = (1/f)*18600
             // divider = 93  = 200 Hz
             //           186 = 100 Hz
-            
-            Process.Start("gpio", "mode " + pin + " pwm");  // Set Pin to PWM mode
-            Process.Start("gpio", "pwm-ms");                // disable balanced pwm mode
-            Process.Start("gpio", "pwmr 1024");             // Set the PWM Range to 1024
-            Process.Start("gpio", "pwmc " + divider);       // Set the PWM divider 
-            
+#if DEBUG
+#else
+            Process.Start("gpio", "mode 1 pwm");
+            Process.Start("gpio", "pwm-ms");
+            Process.Start("gpio", "pwmr 1024");
+            Process.Start("gpio", "pwmc " + frequency);
 #endif
+            
         }
 
-        public void setPWM(int value)
+        public void setPWM(int value, bool InvertedPWM)
         {
 #if DEBUG
-            Console.WriteLine("Setze Pin: " + pin + " auf " + value);
+            Console.WriteLine("Setze PWM auf: " + value);
 #else
-            Process.Start("gpio", "pwm " + pin + " " + value);
+            if( InvertedPWM )
+                Process.Start("gpio", "pwm 1 " + (1024-value));
+            else
+                Process.Start("gpio", "pwm 1 " +  value);
 #endif
         }
 
-        public int pin;
     }
 
     public class mpc_Control

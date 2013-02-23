@@ -2,13 +2,13 @@
 <ArrayOfTimedAction xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <TimedAction xsi:type="TimedAction_PWM">
     <Name>Test1 PWM</Name>
-    <LED_Pin>1</LED_Pin>
-    <divider>93</divider>
+    <PWM_Frequency>200</PWM_Frequency>
+    <PWM_Inverted>true</PWM_Inverted>
     <active>true</active>
-    <force>true</force>
+    <force>false</force>
     <StartTime>
-      <hour>16</hour>
-      <minute>17</minute>
+      <hour>14</hour>
+      <minute>00</minute>
     </StartTime>
     <RampTime>2</RampTime>
     <LagTime>2</LagTime>
