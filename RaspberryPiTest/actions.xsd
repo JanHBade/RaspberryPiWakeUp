@@ -7,8 +7,8 @@
           <xsd:complexType>
             <xsd:sequence>
               <xsd:element name="Name" type="xsd:string" />
-              <xsd:element minOccurs="0" name="LED_Pin" type="xsd:unsignedByte" />
-              <xsd:element minOccurs="0" name="divider" type="xsd:unsignedShort" />
+              <xsd:element minOccurs="0" name="PWM_Frequency" type="xsd:unsignedShort" />
+			  <xsd:element name="PWM_Inverted" type="xsd:boolean" />
               <xsd:element name="active" type="xsd:boolean" />
               <xsd:element name="force" type="xsd:boolean" />
               <xsd:element name="StartTime">

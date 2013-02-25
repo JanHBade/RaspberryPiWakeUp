@@ -29,58 +29,73 @@ namespace Timed
             stopAction();
         }
 
+        protected int CalcPWMValue()
+        {
+            if( PWM_Inverted )
+                return pwm_werte[(pwm_werte.Length - 1) - ((Value - 1) / 2)];
+            else
+                return pwm_werte[(Value - 1) / 2];
+        }
+
         protected override void startAction()
         {
-            base.startAction();            
-            act_pwm_value = pwm_werte[(Value - 1) / 2];
+            base.startAction();
+            act_pwm_value = CalcPWMValue();
+      
+                
             Console.WriteLine(Name + " init PWM Value: " + act_pwm_value);
 #if DEBUG
 #else
-            pwm_pin.setPWM(act_pwm_value, PWM_Inverted);
+            pwm_pin.setPWM(act_pwm_value);
 #endif
         }
 
         protected override void Ramp_active()
         {
-            base.Ramp_active();            
-            act_pwm_value = pwm_werte[(Value - 1) / 2];
+            base.Ramp_active();
+            act_pwm_value = CalcPWMValue();
+                
             Console.WriteLine(Name + " Ramp PWM Value: " + act_pwm_value);
 #if DEBUG            
 #else
-            pwm_pin.setPWM(act_pwm_value, PWM_Inverted);
+            pwm_pin.setPWM(act_pwm_value);
 #endif
         }
 
         protected override void stopAction()
         {
             base.stopAction();
-            act_pwm_value = 0;
+            if( PWM_Inverted )
+                act_pwm_value = 1024;
+            else
+                act_pwm_value = 0;
             Console.WriteLine(Name + " Stop PWM Value: " + act_pwm_value);
 #if DEBUG            
 #else
-            pwm_pin.setPWM(act_pwm_value, PWM_Inverted);
+            pwm_pin.setPWM(act_pwm_value);
 #endif
         }
 
         protected override void forceAction()
         {
             base.forceAction();
-            act_pwm_value = pwm_werte[(Value - 1) / 2];
+            act_pwm_value = CalcPWMValue();
             Console.WriteLine(Name + " Force PWM Value: " + act_pwm_value);
 #if DEBUG
 #else
-            pwm_pin.setPWM(act_pwm_value, PWM_Inverted);
+            pwm_pin.setPWM(act_pwm_value);
 #endif
         }
         
         private RPi_IO pwm_pin;
-        private int[] pwm_werte ={10,
-                        11,12,13,15,16,18,19,21,23,26,
-                        28,31,34,38,41,45,50,55,60,66,
-                        73,80,88,96,106,117,128,141,155,
-                        170,187,205,226,248,273,300,329,
-                        362,398,437,481,528,580,638,701,
-                        771,847,931,1023};
+        private int[] pwm_werte ={
+                                     10,  11,  12,  13,  15,  16,  18,  19,  21,  23,
+                                     26,  28,  31,  34,  38,  41,  45,  50,  55,  60,
+                                     66,  73,  80,  88,  96, 106, 117, 128, 141, 155,
+                                    170, 187, 205, 226, 248, 273, 300, 329, 362, 398,
+                                    437, 481, 528, 580, 638, 701, 771, 847, 931, 1023
+                                 };
+  
         private int act_pwm_value;
     }
 

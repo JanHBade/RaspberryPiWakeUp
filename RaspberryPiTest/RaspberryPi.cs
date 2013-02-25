@@ -28,14 +28,11 @@ namespace RaspberryPi
             
         }
 
-        public void setPWM(int value, bool InvertedPWM)
+        public void setPWM(int value)
         {
 #if DEBUG
             Console.WriteLine("Setze PWM auf: " + value);
 #else
-            if( InvertedPWM )
-                Process.Start("gpio", "pwm 1 " + (1024-value));
-            else
                 Process.Start("gpio", "pwm 1 " +  value);
 #endif
         }
