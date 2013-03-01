@@ -225,6 +225,9 @@ namespace Timed
                 forceAction();
             else
             {
+                if (StartTime.compare())
+                    StartTime.addOneDay();
+
                 while (!shouldStop)
                 {
                     if (StartTime.compare())
@@ -242,8 +245,10 @@ namespace Timed
                 Thread.Sleep(5000);
 #endif
                 }
+                stopAction();
             }
             newThread = null;
+            t = null;
             Console.WriteLine(Name+" worker thread: terminating gracefully.");
         }
 
@@ -312,7 +317,7 @@ namespace Timed
                 else if (DateTime.Now.Hour < hour)
                     return false;
                 else
-                    if (DateTime.Now.Minute > minute)
+                    if (DateTime.Now.Minute >= minute)
                         return true;
                     else
                         return false;
