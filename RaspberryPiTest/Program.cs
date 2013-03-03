@@ -22,11 +22,11 @@ namespace RaspberryPiTest
             Console.CancelKeyPress += delegate(object sender, ConsoleCancelEventArgs e)
             {
                 keepRunning = false;
-                e.Cancel = true;                
+                e.Cancel = true;
             };
 
-            if(args.Length==1)
-                file=args[0];
+            if (args.Length == 1)
+                file = args[0];
 
 #if DEBUG
             DateTime now = DateTime.Now;
@@ -35,11 +35,11 @@ namespace RaspberryPiTest
             Console.WriteLine("Day: " + now.Day);
             Console.WriteLine("DayOfWeek: " + now.DayOfWeek);
             Console.WriteLine("DateTime.Now: " + DateTime.Now);
-            Console.WriteLine(DateTime.Now.ToString("dd.mm.yyyy")+"\n");
+            Console.WriteLine(DateTime.Now.ToString("d.M.yyyy") + "\n");
 #endif
 
             try
-            {                
+            {
                 FSW = new FileSystemWatcher();
                 FileInfo fi = new FileInfo(file);
 
@@ -52,11 +52,12 @@ namespace RaspberryPiTest
 
                 // Filesystemwatcher aktivieren                
                 FSW.EnableRaisingEvents = true;
-               
+
                 readfromXML();
 
                 foreach (TimedAction ta in actionstodo)
-                {                    
+                {
+                    ta.Name = DateTime.Now.Second + " " + ta.Name;
                     ta.Start();
                 }
 
@@ -80,15 +81,16 @@ namespace RaspberryPiTest
         static void readfromXML()
         {
             XmlSerializer deserializer = new XmlSerializer(typeof(List<TimedAction>));
-            TextReader textReader = new StreamReader(file);            
+            TextReader textReader = new StreamReader(file);
+            actionstodo.Clear();
             actionstodo = (List<TimedAction>)deserializer.Deserialize(textReader);
             textReader.Close();
-        }        
+        }
 
         static void FSW_Changed(object sender, FileSystemEventArgs e)
         {
             FSW.EnableRaisingEvents = false;    //wegen doppelter Events die Events ausschalten
-                       
+
 #if DEBUG
             Console.WriteLine("Main: Lese neu ein!");
 #endif
@@ -106,10 +108,11 @@ namespace RaspberryPiTest
                 if (ta.StartTime.compare())
                     ta.StartTime.addOneDay();
 
+                ta.Name = DateTime.Now.Second + " " + ta.Name;
                 ta.Start();
             }
 
             FSW.EnableRaisingEvents = true; //File Watcher wieder aktivieren
-        }   
-    }        
+        }
+    }
 }

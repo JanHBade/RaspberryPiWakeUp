@@ -7,8 +7,8 @@
     <active>true</active>
     <force>false</force>
     <StartTime>
-      <hour>14</hour>
-      <minute>00</minute>
+      <hour>15</hour>
+      <minute>50</minute>
     </StartTime>
     <RampTime>2</RampTime>
     <LagTime>2</LagTime>
