@@ -263,6 +263,11 @@ namespace Timed
                 stopAction();
             }
             newThread = null;
+            if (t != null)
+            {
+                t.Enabled = false;
+                t = null;
+            }
             Console.WriteLine(Name+" worker thread: terminating gracefully.");
         }
 
