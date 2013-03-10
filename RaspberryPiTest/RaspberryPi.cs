@@ -5,10 +5,12 @@ namespace RaspberryPi
 {
     class RPi_IO
     {
-
-
+        private Process p;
+        
         public RPi_IO( int frequency)
         {
+            p = new Process();
+            p.StartInfo.FileName = "gpio";
 
             Console.WriteLine("Setze PWM-Frequenz: " + frequency);
             frequency = (int)((1.0 / (float)frequency) * 18600.0);
@@ -20,10 +22,14 @@ namespace RaspberryPi
             //           186 = 100 Hz
 #if DEBUG
 #else
-            Process.Start("gpio", "mode 1 pwm");
-            Process.Start("gpio", "pwm-ms");
-            Process.Start("gpio", "pwmr 1024");
-            Process.Start("gpio", "pwmc " + frequency);
+            execute("mode 1 pwm");
+            execute("pwm-ms");
+            execute("pwmr 1024");
+            execute("pwmc " + frequency);
+            //Process.Start("gpio", "mode 1 pwm");
+            //Process.Start("gpio", "pwm-ms");
+            //Process.Start("gpio", "pwmr 1024");
+            //Process.Start("gpio", "pwmc " + frequency);
 #endif
             
         }
@@ -33,8 +39,16 @@ namespace RaspberryPi
 #if DEBUG
             Console.WriteLine("Setze PWM auf: " + value);
 #else
-                Process.Start("gpio", "pwm 1 " +  value);
+            Process.Start("gpio", "pwm 1 " +  value);
+            execute("pwm 1 " + value);
 #endif
+        }
+
+        private void execute(String cmd)
+        {
+            p.StartInfo.Arguments = cmd;
+            p.Start();
+            p.WaitForExit();
         }
 
     }

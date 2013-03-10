@@ -178,7 +178,7 @@ namespace Timed
 
         public void Start()
         {
-            if (active)
+            if (active && newThread==null)
             {
                 newThread = new Thread(this.DoWork);
                 newThread.Start();
@@ -274,7 +274,7 @@ namespace Timed
         
 
         private volatile bool shouldStop=false;
-        private Thread newThread;
+        private Thread newThread=null;
         private System.Timers.Timer t;
         private bool LagTime_active = false;
         private int LagTime_ms;

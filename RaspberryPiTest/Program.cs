@@ -15,6 +15,7 @@ namespace RaspberryPiTest
         static List<TimedAction> actionstodo = new List<TimedAction>();
         static FileSystemWatcher FSW;
         static volatile bool keepRunning = true;
+        static volatile bool restart;
         static String file = "actions.xml";
 
         static void Main(string[] args)
@@ -40,36 +41,42 @@ namespace RaspberryPiTest
 
             try
             {
-                FSW = new FileSystemWatcher();
-                FileInfo fi = new FileInfo(file);
-
-                // Pfad und Filter festlegen               
-                FSW.Path = fi.DirectoryName;
-                FSW.Filter = fi.Name;
-
-                // Events definieren
-                FSW.Changed += new FileSystemEventHandler(FSW_Changed);
-
-                // Filesystemwatcher aktivieren                
-                FSW.EnableRaisingEvents = true;
-
-                readfromXML();
-
-                foreach (TimedAction ta in actionstodo)
+                do
                 {
-                    ta.Name = DateTime.Now.Second + " " + ta.Name;
-                    ta.Start();
-                }
+                    restart = false;
+                    FSW = new FileSystemWatcher();
+                    FileInfo fi = new FileInfo(file);
 
-                while (keepRunning)
-                {
-                    Thread.Sleep(1000);
-                }
+                    // Pfad und Filter festlegen               
+                    FSW.Path = fi.DirectoryName;
+                    FSW.Filter = fi.Name;
 
-                foreach (TimedAction ta in actionstodo)
-                {
-                    ta.RequestStop();
-                }
+                    // Events definieren
+                    FSW.Changed += new FileSystemEventHandler(FSW_Changed);
+
+                    // Filesystemwatcher aktivieren                
+                    FSW.EnableRaisingEvents = true;
+
+                    readfromXML();
+
+                    foreach (TimedAction ta in actionstodo)
+                    {
+                        ta.Name = DateTime.Now.Second + " " + ta.Name;
+                        ta.Start();
+                    }
+
+                    while (keepRunning)
+                    {
+                        Thread.Sleep(1000);
+                        if (restart) break;
+                    }
+
+                    foreach (TimedAction ta in actionstodo)
+                    {
+                        ta.RequestStop();
+                    }
+                    Thread.Sleep(10000);
+                } while (restart);
             }
             catch (Exception exp)
             {
@@ -91,28 +98,8 @@ namespace RaspberryPiTest
         {
             FSW.EnableRaisingEvents = false;    //wegen doppelter Events die Events ausschalten
 
-#if DEBUG
-            Console.WriteLine("Main: Lese neu ein!");
-#endif
-            foreach (TimedAction ta in actionstodo)
-            {
-                ta.RequestStop();
-            }
-
-            Thread.Sleep(10000);
-
-            readfromXML();
-
-            foreach (TimedAction ta in actionstodo)
-            {
-                if (ta.StartTime.compare())
-                    ta.StartTime.addOneDay();
-
-                ta.Name = DateTime.Now.Second + " " + ta.Name;
-                ta.Start();
-            }
-
-            FSW.EnableRaisingEvents = true; //File Watcher wieder aktivieren
+            Console.WriteLine("FSW Changed: Fordere Neustart an");
+            restart = true;
         }
     }
 }
